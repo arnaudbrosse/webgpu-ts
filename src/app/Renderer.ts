@@ -29,7 +29,7 @@ export class Renderer {
       vertex: {
         module: object.material.vertexShaderModule,
         entryPoint: 'vs',
-        buffers: [{ arrayStride: 4 * 4, attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x4' }] }]
+        buffers: [{ arrayStride: 3 * 4, attributes: [{ shaderLocation: 0, offset: 0, format: 'float32x3' }] }]
       },
       fragment: {
         module: object.material.fragmentShaderModule,
@@ -38,6 +38,7 @@ export class Renderer {
       },
       primitive: {
         topology: 'triangle-list'
+        // cullMode: 'back'
       }
     });
 
@@ -47,6 +48,7 @@ export class Renderer {
       colorAttachments: [
         {
           view: this.context.getCurrentTexture().createView(),
+          clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
           loadOp: 'clear',
           storeOp: 'store'
         }
@@ -55,8 +57,9 @@ export class Renderer {
 
     const pass = encoder.beginRenderPass(renderPassDescriptor);
     pass.setPipeline(pipeline);
-    pass.setVertexBuffer(0, object.vertexBuffer);
-    pass.draw(6, 1, 0, 0);
+    pass.setVertexBuffer(0, object.geometry.positionBuffer);
+    pass.setIndexBuffer(object.geometry.indexBuffer, 'uint16'); // Specify index buffer and format
+    pass.drawIndexed(object.geometry.indexCount);
     pass.end();
 
     this.device.queue.submit([encoder.finish()]);

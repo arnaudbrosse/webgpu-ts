@@ -1,12 +1,9 @@
+import { Object3D } from './Object3D.ts';
 import { Material } from './Material.ts';
 import { Geometry } from './Geometry.ts';
 
-export class Object3D {
-  public material: Material;
-  public geometry: Geometry;
-
+export class Mesh extends Object3D {
   constructor(material: Material, geometry: Geometry) {
-    this.material = material;
-    this.geometry = geometry;
+    super(material, geometry);
   }
 }

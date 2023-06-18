@@ -1,13 +1,21 @@
-import { Cube } from './Cube.ts';
+import { Mesh } from './Mesh.ts';
 import { Renderer } from './Renderer.ts';
+import { CubeGeometry } from './CubeGeometry.ts';
+import { Material } from './Material.ts';
+
+import vertexShader from '../shaders/cube/vertex.wgsl';
+import fragmentShader from '../shaders/cube/fragment.wgsl';
 
 export class App {
   private renderer: Renderer;
-  private readonly cube: Cube;
+  private readonly cube: Mesh;
 
   constructor() {
     this.renderer = new Renderer();
-    this.cube = new Cube(this.renderer.device);
+
+    const geometry = new CubeGeometry(this.renderer.device);
+    const material = new Material(this.renderer.device, vertexShader, fragmentShader);
+    this.cube = new Mesh(material, geometry);
 
     this.render();
   }
