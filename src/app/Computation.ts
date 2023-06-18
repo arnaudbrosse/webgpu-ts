@@ -5,7 +5,7 @@ const device = await adapter?.requestDevice();
 
 export class Computation {
   private device!: GPUDevice;
-  private pipeline: GPUComputePipeline;
+  private readonly pipeline: GPUComputePipeline;
 
   constructor() {
     this.device = device!;
