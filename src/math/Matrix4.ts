@@ -163,7 +163,7 @@ export class Matrix4 {
     return result;
   }
 
-  transpose(): Matrix4 {
+  public transpose(): Matrix4 {
     const matrix = new Matrix4();
 
     const a = this.elements;

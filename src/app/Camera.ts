@@ -1,24 +1,21 @@
-export class Camera {
-  private near: number;
-  private far: number;
-  private fov: number;
-  private aspect: number;
-  private projectionMatrix: Float32Array;
-  private viewMatrix: Float32Array;
-  private position: Float32Array;
-  private target: Float32Array;
-  private up: Float32Array;
+import { Matrix4 } from '../math/Matrix4.ts';
+import { Object3D } from './Object3D.ts';
+
+export class Camera extends Object3D {
+  public near: number;
+  public far: number;
+  public fov: number;
+  public aspect: number;
+  public projectionMatrix: Matrix4;
 
   constructor(near: number, far: number, fov: number, aspect: number) {
+    super();
+
     this.near = near;
     this.far = far;
     this.fov = fov;
     this.aspect = aspect;
 
-    this.projectionMatrix = new Float32Array(16);
-    this.viewMatrix = new Float32Array(16);
-    this.position = new Float32Array(3);
-    this.target = new Float32Array(3);
-    this.up = new Float32Array([0, 1, 0]);
+    this.projectionMatrix = Matrix4.perspective(fov * (Math.PI / 180), aspect, near, far);
   }
 }

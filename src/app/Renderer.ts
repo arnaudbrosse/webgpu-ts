@@ -1,5 +1,6 @@
 import { Scene } from './Scene.ts';
 import { Camera } from './Camera.ts';
+import { Mesh } from './Mesh.ts';
 
 const adapter = await navigator.gpu.requestAdapter();
 const device = await adapter?.requestDevice();
@@ -27,6 +28,7 @@ export class Renderer {
 
   public render(scene: Scene, _camera: Camera) {
     scene.traverse((object) => {
+      if (!(object instanceof Mesh)) return;
       const pipeline = this.device.createRenderPipeline({
         layout: 'auto',
         vertex: {
@@ -45,6 +47,13 @@ export class Renderer {
         }
       });
 
+      const bindGroup = this.device.createBindGroup({
+        layout: pipeline.getBindGroupLayout(0),
+        entries: [{ binding: 0, resource: { buffer: object.material.uniformBuffer } }]
+      });
+
+      this.device.queue.writeBuffer(object.material.uniformBuffer, 0, object.material.uniformValues);
+
       const encoder = this.device.createCommandEncoder();
 
       const renderPassDescriptor: GPURenderPassDescriptor = {
@@ -60,6 +69,7 @@ export class Renderer {
 
       const pass = encoder.beginRenderPass(renderPassDescriptor);
       pass.setPipeline(pipeline);
+      pass.setBindGroup(0, bindGroup);
       pass.setVertexBuffer(0, object.geometry.positionBuffer);
       pass.setIndexBuffer(object.geometry.indexBuffer, 'uint16'); // Specify index buffer and format
       pass.drawIndexed(object.geometry.indexCount);
