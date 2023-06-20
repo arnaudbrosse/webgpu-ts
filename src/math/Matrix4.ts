@@ -1,7 +1,7 @@
 import { Vector3 } from './Vector3.ts';
 
 export class Matrix4 {
-  elements: number[];
+  public elements: number[];
 
   constructor() {
     this.elements = new Array(16).fill(0);
@@ -103,7 +103,7 @@ export class Matrix4 {
     return matrix;
   }
 
-  multiply(matrix: Matrix4): Matrix4 {
+  public multiply(matrix: Matrix4): Matrix4 {
     const result = new Matrix4();
     const a = this.elements;
     const b = matrix.elements;
@@ -205,7 +205,7 @@ export class Matrix4 {
     return matrix;
   }
 
-  inverse(): Matrix4 {
+  public inverse(): Matrix4 {
     const matrix = new Matrix4();
 
     const a = this.elements;

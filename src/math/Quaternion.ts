@@ -1,10 +1,8 @@
-import { Vector3 } from './Vector3.ts';
-
 export class Quaternion {
-  private x: number;
-  private y: number;
-  private z: number;
-  private w: number;
+  public x: number;
+  public y: number;
+  public z: number;
+  public w: number;
 
   constructor(x: number, y: number, z: number, w: number) {
     this.x = x;
@@ -21,40 +19,84 @@ export class Quaternion {
     return this;
   }
 
-  public clone(): Quaternion {
-    return new Quaternion(this.x, this.y, this.z, this.w);
-  }
-
-  public copy(quaternion: Quaternion): Quaternion {
-    this.x = quaternion.x;
-    this.y = quaternion.y;
-    this.z = quaternion.z;
-    this.w = quaternion.w;
-    return this;
-  }
-
-  public setFromEuler(x: number, y: number, z: number): Quaternion {
-    const c1 = Math.cos(x / 2);
-    const c2 = Math.cos(y / 2);
-    const c3 = Math.cos(z / 2);
-    const s1 = Math.sin(x / 2);
-    const s2 = Math.sin(y / 2);
-    const s3 = Math.sin(z / 2);
-
-    this.x = s1 * c2 * c3 + c1 * s2 * s3;
-    this.y = c1 * s2 * c3 - s1 * c2 * s3;
-    this.z = c1 * c2 * s3 + s1 * s2 * c3;
-    this.w = c1 * c2 * c3 - s1 * s2 * s3;
-    return this;
-  }
-
-  public setFromAxisAngle(axis: Vector3, angle: number): Quaternion {
-    const halfAngle = angle / 2;
-    const s = Math.sin(halfAngle);
-    this.x = axis.x * s;
-    this.y = axis.y * s;
-    this.z = axis.z * s;
+  public rotateX(angle: number): Quaternion {
+    const halfAngle = angle * 0.5;
+    this.x = Math.sin(halfAngle);
+    this.y = 0;
+    this.z = 0;
     this.w = Math.cos(halfAngle);
+    return this;
+  }
+
+  public rotateY(angle: number): Quaternion {
+    const halfAngle = angle * 0.5;
+    this.x = 0;
+    this.y = Math.sin(halfAngle);
+    this.z = 0;
+    this.w = Math.cos(halfAngle);
+    return this;
+  }
+
+  public rotateZ(angle: number): Quaternion {
+    const halfAngle = angle * 0.5;
+    this.x = 0;
+    this.y = 0;
+    this.z = Math.sin(halfAngle);
+    this.w = Math.cos(halfAngle);
+    return this;
+  }
+
+  public invert(): Quaternion {
+    this.x = -this.x;
+    this.y = -this.y;
+    this.z = -this.z;
+    return this;
+  }
+
+  public normalize(): Quaternion {
+    const length = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
+    this.x /= length;
+    this.y /= length;
+    this.z /= length;
+    this.w /= length;
+    return this;
+  }
+
+  public multiply(other: Quaternion): Quaternion {
+    const x = this.x;
+    const y = this.y;
+    const z = this.z;
+    const w = this.w;
+
+    this.x = w * other.x + x * other.w + y * other.z - z * other.y;
+    this.y = w * other.y + y * other.w + z * other.x - x * other.z;
+    this.z = w * other.z + z * other.w + x * other.y - y * other.x;
+    this.w = w * other.w - x * other.x - y * other.y - z * other.z;
+
+    return this;
+  }
+
+  public dot(other: Quaternion): number {
+    return this.x * other.x + this.y * other.y + this.z * other.z + this.w * other.w;
+  }
+
+  public fromEuler(x: number, y: number, z: number): Quaternion {
+    const halfX = x * 0.5;
+    const halfY = y * 0.5;
+    const halfZ = z * 0.5;
+
+    const cosX = Math.cos(halfX);
+    const sinX = Math.sin(halfX);
+    const cosY = Math.cos(halfY);
+    const sinY = Math.sin(halfY);
+    const cosZ = Math.cos(halfZ);
+    const sinZ = Math.sin(halfZ);
+
+    this.x = sinX * cosY * cosZ + cosX * sinY * sinZ;
+    this.y = cosX * sinY * cosZ - sinX * cosY * sinZ;
+    this.z = cosX * cosY * sinZ - sinX * sinY * cosZ;
+    this.w = cosX * cosY * cosZ + sinX * sinY * sinZ;
+
     return this;
   }
 }
