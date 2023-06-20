@@ -3,17 +3,17 @@ import { Matrix4 } from '../math/Matrix4.ts';
 import { Quaternion } from '../math/Quaternion.ts';
 
 export class Object3D {
-  private matrix: Matrix4;
-  private maxtrixWorld: Matrix4;
-  private position: Vector3;
-  private rotation: Vector3;
-  private scale: Vector3;
-  private quaternion: Quaternion;
-  private up: Vector3;
+  protected matrix: Matrix4;
+  protected matrixWorld: Matrix4;
+  protected position: Vector3;
+  protected rotation: Vector3;
+  protected scale: Vector3;
+  protected quaternion: Quaternion;
+  protected up: Vector3;
 
   constructor() {
     this.matrix = new Matrix4();
-    this.maxtrixWorld = new Matrix4();
+    this.matrixWorld = new Matrix4();
 
     this.position = new Vector3(0, 0, 0);
     this.rotation = new Vector3(0, 0, 0);
@@ -26,10 +26,20 @@ export class Object3D {
     this.matrix.multiply(matrix);
   }
 
+  public applyQuaternion(quaternion: Quaternion): void {
+    this.quaternion.multiply(quaternion);
+  }
+
   public translate(x: number, y: number, z: number): void {
     this.position.x += x;
     this.position.y += y;
     this.position.z += z;
+  }
+
+  public rotate(x: number, y: number, z: number): void {
+    this.rotation.x += x;
+    this.rotation.y += y;
+    this.rotation.z += z;
   }
 
   public lookAt(target: Vector3): void {
